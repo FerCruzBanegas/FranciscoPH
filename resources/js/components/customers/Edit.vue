@@ -13,7 +13,7 @@
             <a class="card-header-action ml-1" href="#" :disabled="submitingDestroy" @click.prevent="destroy">
               <i class="fas fa-spinner fa-spin" v-if="submitingDestroy"></i>
               <i class="far fa-trash-alt" v-else></i>
-              <span class="d-md-down-none ml-1">Delete</span>
+              <span class="d-md-down-none ml-1">Eliminar</span>
             </a>
           </div>
         </div>

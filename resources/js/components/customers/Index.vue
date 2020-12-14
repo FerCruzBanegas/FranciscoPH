@@ -53,7 +53,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="customer in customers" @click="editCustomer(customer.id)">
+          <tr v-for="customer in customers">
             <td class="d-none d-sm-table-cell">{{customer.id}}</td>
             <td>
               {{ customer.name }}
@@ -68,7 +68,7 @@
               <small>{{customer.created_at | moment("LL") }}</small> - <small class="text-muted">{{customer.created_at | moment("LT") }}</small>
             </td>
             <td class="d-none d-sm-table-cell">
-              <a href="#" class="text-muted"><i class="fas fa-pencil-alt"></i></a>
+              <button @click="editCustomer(customer.id)" class="text-muted"><i class="fas fa-pencil-alt"></i></button>
             </td>
           </tr>
         </tbody>

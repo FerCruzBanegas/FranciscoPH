@@ -42,6 +42,10 @@
               <div class="form-group">
                 <label>Roles</label>
                 <multiselect
+                  placeholder="Seleccionar Rol"
+                  selectedLabel="Seleccionado"
+                  selectLabel="Presione para seleccionar"
+                  deselectLabel="Presione para eliminar"
                   v-model="user.roles"
                   :options="roles"
                   :multiple="true"

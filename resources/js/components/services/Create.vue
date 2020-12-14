@@ -205,11 +205,11 @@ export default {
         this.disabled = true;
         axios.post('/api/services/store', { image: this.payload_img, src: this.payload_src, type: this.selected, customer: this.customer.customers.id })
         .then(({ data }) => {
-            this.resetUploader()
-                .notify('success', 'Se registraron los datos correctamente!');
+          this.notify('success', 'Se registraron los datos correctamente!');
+          setTimeout(() => {location.href = `/services/${data.id}/show`}, 500);
         })
         .catch(err => {
-            this.resetUploader();
+          this.resetUploader();
         })
       } else {
         this.notify('warning', `No tienes ningún archivo en proceso`);

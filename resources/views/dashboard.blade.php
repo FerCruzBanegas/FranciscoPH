@@ -23,6 +23,11 @@
                     <roles-count></roles-count>
                     @endcan
                 </div>
+                <div class="col-sm-6 col-xl-4">
+                    @can('read-roles')
+                    <services-count></roles-count>
+                    @endcan
+                </div>
             </div>
         </div>
     </div>

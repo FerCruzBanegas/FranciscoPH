@@ -6,16 +6,10 @@
         <div class="card-header px-0 mt-2 bg-transparent clearfix">
           <h4 class="float-left pt-2">Datos del Servicio</h4>
           <div class="card-header-actions mr-1">
-            <a class="btn btn-primary" href="#" :disabled="submiting" @click.prevent="update">
-              <i class="fas fa-spinner fa-spin" v-if="submiting"></i>
-              <i class="fas fa-check" v-else></i>
-              <span class="ml-1">Guardar</span>
-            </a>
-            <a class="card-header-action ml-1" href="#" :disabled="submitingDestroy" @click.prevent="destroy">
-              <i class="fas fa-spinner fa-spin" v-if="submitingDestroy"></i>
-              <i class="far fa-trash-alt" v-else></i>
-              <span class="d-md-down-none ml-1">Delete</span>
-            </a>
+            <button class="card-header-action ml-1" @click="goBack">
+              <i class="fas fa-arrow-left"></i>
+              <span class="d-md-down-none ml-1">Volver a Lista</span>
+            </button>
           </div>
         </div>
         <div class="card-body px-0">
@@ -33,23 +27,35 @@
               <small class="text-muted">{{ service.created | moment("LL") }}</small>
             </div>
           </div>
-          <div class="row mt-2" v-if="!loading">
-            <div class="col-md-6 col-xl-6">
-              <div class="demo-gallery" v-viewer>
-                <div class="item-gallery">
-                  <a href="#">
-                    <img src="http://127.0.0.1:8000/storage/uploads/G2CDW8xs0LZbMNPSpxtce5VRuPhmBK0R85OaSePm.jpeg">
-                  </a>
+          <div v-if="!loading">
+            <div class="row mt-2">
+              <div class="col-md-6 col-xl-6">
+                <div class="demo-gallery" v-viewer>
+                  <div class="item-gallery">
+                    <a href="#">
+                      <img :src="service.image.image_url">
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-xl-6" style="margin-top: 3px;">
+                <div class="player-container" style="height: 300px;" v-if="service.audio">
+                  <vue-core-video-player :autoplay="false" :src="service.audio.audio_url"></vue-core-video-player>
+                </div>
+                <div class="player-container" style="height: 300px;" v-else>
+                  <vue-core-video-player :autoplay="false" :src="service.video.video_url"></vue-core-video-player>
                 </div>
               </div>
             </div>
-            <div class="col-md-6 col-xl-6" style="margin-top: 3px;">
-              <div class="player-container" style="height: 300px;" v-if="service.audio">
-                <vue-core-video-player :src="service.audio.audio_url"></vue-core-video-player>
-              </div>
-              <div class="player-container" style="height: 300px;" v-else>
-                <vue-core-video-player :src="service.video.video_url"></vue-core-video-player>
-              </div>
+            <div class="card-header p-2 bg-tansparent">
+              <strong>Datos de Aplicación</strong><br>
+              <small class="text-muted">Código qr que le dará acceso a los recursos desde la aplicación.</small>
+            </div>
+            <div class="d-flex justify-content-center p-2 bg-tansparent">
+              <button @click="downloadQr" type="button" class="btn btn-primary" style="height: 40px; margin-right: 4px;">
+                <i class="fas fa-download"></i>
+              </button>
+              <qr-code ref="qr" :text="service.qr" :size="200"></qr-code>
             </div>
           </div>
           <div class="row" v-else>
@@ -58,16 +64,6 @@
                 <content-placeholders-text/>
               </content-placeholders>
             </div>
-          </div>
-          <div class="card-header p-2 bg-tansparent">
-            <strong>Datos de Aplicación</strong><br>
-            <small class="text-muted">Código qr que le dará acceso a los recursos desde la aplicación.</small>
-          </div>
-          <div class="d-flex justify-content-center p-2 bg-tansparent">
-            <button @click="test" type="button" class="btn btn-primary" style="height: 40px; margin-right: 2px;">
-              <i class="fas fa-download"></i>
-            </button>
-            <qr-code ref="test" text="Text to encode" :size="200"></qr-code>
           </div>
         </div>
       </div>
@@ -95,8 +91,16 @@ export default {
   },
 
   methods: {
-    test(){
-      console.log(this.$refs["test"])
+    downloadQr(){
+      let qr = this.$refs["qr"].qrCode._el.children[1].src
+      let a = document.createElement('a')
+      a.href = qr
+      a.download = 'qr.png'
+      a.click()
+    },
+
+    goBack() {
+      location.href = '/services'
     },
 
     getService() {
@@ -110,7 +114,7 @@ export default {
       })
       .catch(error => {
         this.$toasted.global.error('El servicio no existe!')
-        location.href = '/services'
+        // location.href = '/services'
       })
       .then(() => {
         this.loading = false

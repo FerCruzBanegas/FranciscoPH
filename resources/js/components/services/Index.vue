@@ -52,19 +52,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="service in services" @click="editService(service.id)">
+          <tr v-for="service in services" >
             <td class="d-none d-sm-table-cell">{{service.id}}</td>
             <td>
               {{ service.date | moment("DD/MM/YYYY") }}
             </td>
             <td>
-              {{ service.customer.name }}
+              {{ service.customer }}
             </td>
             <td class="d-none d-sm-table-cell">
               <small>{{service.created_at | moment("LL") }}</small> - <small class="text-muted">{{service.created_at | moment("LT") }}</small>
             </td>
             <td class="d-none d-sm-table-cell">
-              <a href="#" class="text-muted"><i class="fas fa-pencil-alt"></i></a>
+              <button @click="showService(service.id)" class="text-muted"><i class="fas fa-eye"></i></button>
+              <!-- <button @click="editService(service.id)" class="text-muted"><i class="fas fa-pencil-alt"></i></button> -->
             </td>
           </tr>
         </tbody>
@@ -121,7 +122,7 @@ export default {
         },
         orderBy: {
           column: 'id',
-          direction: 'asc'
+          direction: 'desc'
         },
         search: ''
       },
@@ -147,23 +148,30 @@ export default {
       .then(response => {
         this.services = response.data.data
         delete response.data.data
-        this.filters.pagination = response.data
+        this.filters.pagination = response.data.meta
         this.loading = false
       })
     },
-    editService (serviceId) {
+
+    showService (serviceId) {
       location.href = `/services/${serviceId}/show`
     },
-    // filters
+
+    editService (serviceId) {
+      location.href = `/services/${serviceId}/edit`
+    },
+
     filter() {
       this.filters.pagination.current_page = 1
       this.getServices()
     },
+
     changeSize (perPage) {
       this.filters.pagination.current_page = 1
       this.filters.pagination.per_page = perPage
       this.getServices()
     },
+
     sort (column) {
       if(column == this.filters.orderBy.column) {
         this.filters.orderBy.direction = this.filters.orderBy.direction == 'asc' ? 'desc' : 'asc'
@@ -174,6 +182,7 @@ export default {
 
       this.getServices()
     },
+
     changePage (page) {
       this.filters.pagination.current_page = page
       this.getServices()

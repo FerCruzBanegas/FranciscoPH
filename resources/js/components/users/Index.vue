@@ -52,7 +52,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="user in users" @click="editUser(user.id)">
+          <tr v-for="user in users">
             <td class="d-none d-sm-table-cell">{{user.id}}</td>
             <td>
               <div class="media">
@@ -76,7 +76,7 @@
               <small>{{user.created_at | moment("LL") }}</small> - <small class="text-muted">{{user.created_at | moment("LT") }}</small>
             </td>
             <td class="d-none d-sm-table-cell">
-              <a href="#" class="text-muted"><i class="fas fa-pencil-alt"></i></a>
+              <button @click="editUser(user.id)" class="text-muted"><i class="fas fa-pencil-alt"></i></button>
             </td>
           </tr>
         </tbody>

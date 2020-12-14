@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customers;
 use App\Customer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rule;
 
 class CustomerController extends Controller
 {
@@ -56,7 +57,7 @@ class CustomerController extends Controller
             'name' => 'required|string|max:64',
             'phone' => 'required|string|max:32',
             'ci' => 'required|string|max:16',
-            'email' => 'nullable|max:128|email|unique:customers',
+            'email' => 'nullable|max:128|email',Rule::unique('customers')->ignore($customer->id),
             'address' => 'nullable|string|max:128'
         ]);
 

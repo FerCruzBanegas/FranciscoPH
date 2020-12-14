@@ -14,7 +14,7 @@ class Service extends Model
     protected $hidden = ['deleted_at'];
 
     protected $fillable = [
-        'date', 'customer_id',
+        'date', 'qr', 'customer_id',
     ];
 
     public function customer()

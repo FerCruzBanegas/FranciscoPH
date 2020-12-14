@@ -44,6 +44,7 @@ Vue.component('sidebar', require('./components/layout/Sidebar.vue'));
 // Dashboard
 Vue.component('users-count', require('./components/dashboard/UsersCount.vue'));
 Vue.component('roles-count', require('./components/dashboard/RolesCount.vue'));
+Vue.component('services-count', require('./components/dashboard/ServicesCount.vue'));
 
 // Profile
 Vue.component('profile', require('./components/profile/Profile.vue'));

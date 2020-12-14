@@ -11,25 +11,42 @@ use App\Http\Controllers\Controller;
 use App\Traits\UppyUploaderTrait;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Service\ServiceResource;
+use App\Http\Resources\Service\ServiceCollection;
+use App\Services\EncodeService;
 
 class ServiceController extends Controller
 {
     use UppyUploaderTrait;
+
+    private $service;
+
+    public function __construct(EncodeService $service)
+    {
+        setlocale(LC_ALL, "es_ES");
+        date_default_timezone_set('America/Caracas');
+        
+        $this->service = $service;
+    }
 
     public function filter (Request $request)
     {
         $query = Service::query();
 
         if($request->search) {
-            $query->where('name', 'LIKE', '%'.$request->search.'%');
+            $query->join('customers', 'services.customer_id', '=', 'customers.id')
+            ->where(function($q) use ($request) {
+                $q->where('services.id', $request->search)
+                    ->orWhere('customers.name', 'LIKE', '%' . $request->search .'%');
+            });
+            // $query->where('name', 'LIKE', '%'.$request->search.'%');
         }
 
-        $services = $query->orderBy($request->input('orderBy.column'), $request->input('orderBy.direction'))
+        $services = $query->select('services.*')->orderBy($request->input('orderBy.column'), $request->input('orderBy.direction'))
                     ->paginate($request->input('pagination.per_page'));
 
-        $services->load('customer');
+        // $services->load('customer');
 
-        return $services;
+        return new ServiceCollection($services);
     }
 
     public function show ($service)
@@ -44,6 +61,8 @@ class ServiceController extends Controller
 
     public function store (Request $request)
     {
+        $url = null;
+
         $this->validate($request, [
             'customer' => 'required|integer',
         ]);
@@ -70,15 +89,20 @@ class ServiceController extends Controller
                     'path' => $file,
                     'service_id' => $service->id
                 ]);
+                $url = substr($image->path, 8).'|'.substr($file, 8);
             } else {
                 Video::create([
                     'path' => $file,
                     'service_id' => $service->id
                 ]);
+                $url = substr($file, 8);
             }
+
+            $service->qr = $this->service->encryp($url);
+            $service->save();
         }
 
-        return $request;
+        return response()->json($service);
     }
 
     public function update (Request $request, Service $service)

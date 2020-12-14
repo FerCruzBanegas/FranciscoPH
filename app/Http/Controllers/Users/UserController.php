@@ -7,10 +7,9 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
 use Avatar;
-
 use App\User;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
