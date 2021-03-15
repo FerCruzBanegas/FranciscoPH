@@ -75,7 +75,7 @@
             <td class="d-none d-sm-table-cell">
               <small>{{user.created_at | moment("LL") }}</small> - <small class="text-muted">{{user.created_at | moment("LT") }}</small>
             </td>
-            <td class="d-none d-sm-table-cell">
+            <td class="d-sm-table-cell">
               <button @click="editUser(user.id)" class="text-muted"><i class="fas fa-pencil-alt"></i></button>
             </td>
           </tr>

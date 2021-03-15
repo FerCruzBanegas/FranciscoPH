@@ -32,44 +32,50 @@
           </multiselect>
         </div>
       </div>
-      <table class="table table-hover table-striped">
-        <thead>
-          <tr>
-            <th class="d-none d-sm-table-cell">
-              <a href="#" class="text-dark" @click.prevent="sort('id')">ID</a>
-              <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'id' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'id' && filters.orderBy.direction == 'desc'}"></i>
-            </th>
-            <th class="d-none d-sm-table-cell">
-              <a href="#" class="text-dark" @click.prevent="sort('date')">Fecha</a>
-              <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'date' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'date' && filters.orderBy.direction == 'desc'}"></i>
-            </th>
-            <th>Cliente</th>
-            <th class="d-none d-sm-table-cell">
-              <a href="#" class="text-dark" @click.prevent="sort('created_at')">Registrado</a>
-              <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'created_at' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'created_at' && filters.orderBy.direction == 'desc'}"></i>
-            </th>
-            <th class="d-none d-sm-table-cell"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="service in services" >
-            <td class="d-none d-sm-table-cell">{{service.id}}</td>
-            <td>
-              {{ service.date | moment("DD/MM/YYYY") }}
-            </td>
-            <td>
-              {{ service.customer }}
-            </td>
-            <td class="d-none d-sm-table-cell">
-              <small>{{service.created_at | moment("LL") }}</small> - <small class="text-muted">{{service.created_at | moment("LT") }}</small>
-            </td>
-            <td class="d-none d-sm-table-cell">
-              <button @click="showService(service.id)" class="text-muted"><i class="fas fa-eye"></i></button>
-              <!-- <button @click="editService(service.id)" class="text-muted"><i class="fas fa-pencil-alt"></i></button> -->
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-hover table-striped">
+          <thead>
+            <tr>
+              <th class="d-none d-sm-table-cell">
+                <a href="#" class="text-dark" @click.prevent="sort('id')">ID</a>
+                <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'id' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'id' && filters.orderBy.direction == 'desc'}"></i>
+              </th>
+              <th class="d-none d-sm-table-cell">
+                <a href="#" class="text-dark" @click.prevent="sort('date')">Fecha</a>
+                <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'date' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'date' && filters.orderBy.direction == 'desc'}"></i>
+              </th>
+              <th>Cliente</th>
+              <th class="d-none d-sm-table-cell">
+                <a href="#" class="text-dark" @click.prevent="sort('created_at')">Registrado</a>
+                <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'created_at' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'created_at' && filters.orderBy.direction == 'desc'}"></i>
+              </th>
+              <th class="d-none d-sm-table-cell"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="service in services" >
+              <td class="d-none d-sm-table-cell">{{service.id}}</td>
+              <td>
+                {{ service.date | moment("DD/MM/YYYY") }}
+              </td>
+              <td>
+                {{ service.customer }}
+              </td>
+              <td class="d-none d-sm-table-cell">
+                <small>{{service.created_at | moment("LL") }}</small> - <small class="text-muted">{{service.created_at | moment("LT") }}</small>
+              </td>
+              <td class="d-sm-table-cell">
+                <button @click="showService(service.id)" class="text-muted"><i class="fas fa-eye"></i></button>
+                <!-- <button @click="destroy"class="btn btn-outline-danger btn-sm">
+                  <i class="fas fa-spinner fa-spin" v-if="submitingDestroy"></i>
+                  <i class="fas fa-trash" v-else></i>
+                </button> -->
+                <!-- <button @click="editService(service.id)" class="text-muted"><i class="fas fa-pencil-alt"></i></button> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div class="row" v-if='!loading && filters.pagination.total > 0'>
         <div class="col pt-2">
           {{filters.pagination.from}}-{{filters.pagination.to}} De {{filters.pagination.total}}
@@ -126,7 +132,8 @@ export default {
         },
         search: ''
       },
-      loading: true
+      loading: true,
+      submitingDestroy: false
     }
   },
   mounted () {
@@ -151,6 +158,32 @@ export default {
         this.filters.pagination = response.data.meta
         this.loading = false
       })
+    },
+
+    destroy () {
+      if (!this.submitingDestroy) {
+        this.submitingDestroy = true
+        swal({
+          title: "Estas seguro?",
+          text: "Una vez eliminado, no podrá recuperar este cliente.",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            axios.delete(`/api/customers/${this.customer.id}`)
+            .then(response => {
+              this.$toasted.global.error('Cliente Eliminado!')
+              location.href = '/customers'
+            })
+            .catch(error => {
+              this.errors = error.response.data.errors
+            })
+          }
+          this.submitingDestroy = false
+        })
+      }
     },
 
     showService (serviceId) {

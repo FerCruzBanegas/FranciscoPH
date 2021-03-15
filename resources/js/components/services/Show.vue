@@ -10,6 +10,11 @@
               <i class="fas fa-arrow-left"></i>
               <span class="d-md-down-none ml-1">Volver a Lista</span>
             </button>
+            <a class="card-header-action ml-1" href="#" :disabled="submitingDestroy" @click.prevent="destroy">
+              <i class="fas fa-spinner fa-spin" v-if="submitingDestroy"></i>
+              <i class="far fa-trash-alt" v-else></i>
+              <span class="d-md-down-none ml-1">Eliminar</span>
+            </a>
           </div>
         </div>
         <div class="card-body px-0">
@@ -124,10 +129,10 @@ export default {
     update () {
       if (!this.submiting) {
         this.submiting = true
-        axios.put(`/api/customers/update/${this.customer.id}`, this.customer)
+        axios.put(`/api/services/update/${this.service.id}`, this.service)
         .then(response => {
-          this.$toasted.global.error('Cliente Actualizado!')
-          location.href = '/customers'
+          this.$toasted.global.error('Servicio Actualizado!')
+          location.href = '/services'
         })
         .catch(error => {
           this.errors = error.response.data.errors
@@ -141,17 +146,19 @@ export default {
         this.submitingDestroy = true
         swal({
           title: "Estas seguro?",
-          text: "Una vez eliminado, no podrá recuperar este cliente.",
+          text: "Una vez eliminado, no podrá recuperar este servicio.",
           icon: "warning",
           buttons: true,
           dangerMode: true,
         })
         .then((willDelete) => {
           if (willDelete) {
-            axios.delete(`/api/customers/${this.customer.id}`)
+            axios.delete(`/api/services/${this.service.id}`)
             .then(response => {
-              this.$toasted.global.error('Cliente Eliminado!')
-              location.href = '/customers'
+              if (response.status === 200) {
+              location.href = '/services'
+              this.$toasted.global.error('Servicio Eliminado!')
+              }              
             })
             .catch(error => {
               this.errors = error.response.data.errors

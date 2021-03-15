@@ -16,8 +16,8 @@ class ServiceCollection extends ResourceCollection
                     'date' => $service->date,
                     'qr' => $service->qr,
                     'customer' => $service->customer->name,
-                    'created_at' => Carbon::parse($service->created_at)->format('Y-m-d'),
-                    'updated_at' => Carbon::parse($service->updated_at)->format('Y-m-d'),
+                    'created_at' => Carbon::parse($service->created_at)->format('Y-m-d h:i:s'),
+                    'updated_at' => Carbon::parse($service->updated_at)->format('Y-m-d h:i:s'),
                 ];
             }),
         ];

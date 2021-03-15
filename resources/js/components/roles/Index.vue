@@ -79,7 +79,7 @@
             <td class="d-none d-sm-table-cell">
               <small>{{role.created_at | moment("LL")}}</small> - <small class="text-muted">{{role.created_at | moment("LT")}}</small>
             </td>
-            <td class="d-none d-sm-table-cell">
+            <td class="d-sm-table-cell">
               <a href="#" class="text-muted"><i class="fas fa-pencil-alt"></i></a>
             </td>
           </tr>

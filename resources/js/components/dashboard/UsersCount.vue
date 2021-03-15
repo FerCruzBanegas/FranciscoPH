@@ -5,7 +5,7 @@
         <i class="icon-people"></i>
       </div>
       <div class="text-value">{{users}}</div>
-      <small class="text-muted text-uppercase font-weight-bold">Usuarios registrados</small>
+      <small class="text-muted text-uppercase font-weight-bold">Clientes registrados</small>
     </div>
   </div>
 </template>
@@ -30,3 +30,11 @@ export default {
   }
 }
 </script>
+<style scoped>
+  .card.bg-info {
+    border-color: #11698e;
+  }
+  .bg-info {
+    background-color: #11698e !important;
+  }
+</style>

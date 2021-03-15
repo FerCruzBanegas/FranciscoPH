@@ -27,6 +27,8 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::post('/file/upload', 'FileController@upload');
 
+
+    Route::get('/disk_usage', 'DashboardController@getDiskUsage')->name('home');
     // Route::post('/store', 'FileController@store');
 
 	require __DIR__ . '/profile/profile.php';

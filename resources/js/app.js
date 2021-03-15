@@ -45,6 +45,7 @@ Vue.component('sidebar', require('./components/layout/Sidebar.vue'));
 Vue.component('users-count', require('./components/dashboard/UsersCount.vue'));
 Vue.component('roles-count', require('./components/dashboard/RolesCount.vue'));
 Vue.component('services-count', require('./components/dashboard/ServicesCount.vue'));
+Vue.component('disk-usage', require('./components/dashboard/DiskUsage.vue'));
 
 // Profile
 Vue.component('profile', require('./components/profile/Profile.vue'));

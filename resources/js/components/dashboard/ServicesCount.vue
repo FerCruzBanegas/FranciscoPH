@@ -30,3 +30,11 @@ export default {
   }
 }
 </script>
+<style scoped>
+  .card.bg-danger {
+    border-color: #19456b;
+  }
+  .bg-danger {
+    background-color: #19456b !important;
+  }
+</style>

@@ -29,6 +29,11 @@
                     @endcan
                 </div>
             </div>
+            <div class="row justify-content-md-center">
+                <div class="col-md-9 col-xl-12">
+                    <disk-usage></disk-usage>
+                </div>
+            </div>
         </div>
     </div>
 </div>

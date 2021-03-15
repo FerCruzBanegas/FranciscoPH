@@ -8,6 +8,21 @@ use Illuminate\Support\Facades\Storage;
 
 trait UppyUploaderTrait
 {
+    public function checkExistsFile($name): bool
+    {   
+        $exists = Storage::disk('public')->exists($name);
+        return $exists;
+    }
+
+    public function deleteFile($name): bool
+    {
+        if ($this->checkExistsFile($name)) {
+            return Storage::disk('public')->delete($name);
+        }
+        
+        return false;
+    }
+
     public function upload(Request $request)
     {
         return response([

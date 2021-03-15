@@ -30,3 +30,11 @@ export default {
   }
 }
 </script>
+<style scoped>
+  .card.bg-success {
+    border-color: #16c79a;
+  }
+  .bg-success {
+    background-color: #16c79a !important;
+  }
+</style>

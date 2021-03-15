@@ -1,5 +1,61 @@
 <template>
   <div class="container">
+    <div
+      ref="modal"
+      class="modal fade"
+      :class="{show, 'd-block': active}"
+      tabindex="-1"
+      role="dialog"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Registrar Nuevo Cliente</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+              @click="toggleModal"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="card-body px-0">
+              <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" class="form-control" :class="{'is-invalid': errors.name}" v-model="customer.name">
+                <div class="invalid-feedback" v-if="errors.name">{{errors.name[0]}}</div>
+              </div>
+              <div class="form-group">
+                <div class="row justify-content-md-center">
+                  <div class="col-md-6 col-sm-12">
+                    <label>Teléfono</label>
+                    <input type="text" class="form-control" :class="{'is-invalid': errors.phone}" v-model="customer.phone">
+                    <div class="invalid-feedback" v-if="errors.phone">{{errors.phone[0]}}</div>
+                  </div>
+                  <div class="col-md-6 col-sm-12">
+                    <label>CI</label>
+                    <input type="text" class="form-control" :class="{'is-invalid': errors.ci}" v-model="customer.ci">
+                    <div class="invalid-feedback" v-if="errors.ci">{{errors.ci[0]}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button @click="toggleModal" type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <a class="btn btn-primary" href="#" :disabled="submitingCustomer" @click.prevent="createCustomer">
+              <i class="fas fa-spinner fa-spin" v-if="submitingCustomer"></i>
+              <i class="fas fa-check" v-else></i>
+              <span class="ml-1">Guardar</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="active" class="modal-backdrop fade show"></div>
     <div class="row justify-content-md-center">
       <div class="col-md-9 col-xl-7">
         <div class="card-header px-0 mt-2 bg-transparent clearfix">
@@ -32,7 +88,7 @@
               <small class="form-text text-primary" v-if="errors.customers">{{errors.customers[0]}}</small>
             </div>
             <div class="d-table-cell align-middle">
-              <button style="margin-left: 4px; margin-top: 30px;" type="button" class="btn btn-dark">
+              <button @click="toggleModal" style="margin-left: 4px; margin-top: 30px;" type="button" class="btn btn-dark">
                 <i class="fa fa-plus-circle" aria-hidden="true"></i>
               </button>
             </div>
@@ -95,6 +151,10 @@ export default {
       payload_img: null,
       payload_src: null,
       disabled: true,
+      active: false,
+      show: false,
+      customer: {},
+      submitingCustomer: false
     }
   },
 
@@ -117,6 +177,31 @@ export default {
   },
 
   methods: {
+    toggleModal() {
+      const body = document.querySelector("body");
+      this.active = !this.active;
+      this.active
+        ? body.classList.add("modal-open")
+        : body.classList.remove("modal-open");
+      setTimeout(() => (this.show = !this.show), 10);
+    },
+
+    createCustomer() {
+      if (!this.submitingCustomer) {
+        this.submitingCustomer = true
+        axios.post(`/api/customers/store`, this.customer)
+        .then(response => {
+          this.toggleModal()
+          this.getCustomers()
+          this.$toasted.global.error('Cliente Registrado!')
+        })
+        .catch(error => {
+          this.errors = error.response.data.errors
+          this.submitingCustomer = false
+        })
+      }
+    },
+
     instantiateUppy() {
       this.uppy = Uppy({
         debug: true,
@@ -225,21 +310,6 @@ export default {
         this.errors = error.response.data.errors
       })
     },
-
-    create () {
-      if (!this.submiting) {
-        this.submiting = true
-        axios.post(`/api/customers/store`, this.customer)
-        .then(response => {
-          this.$toasted.global.error('Cliente Registrado!')
-          location.href = '/customers'
-        })
-        .catch(error => {
-          this.errors = error.response.data.errors
-          this.submiting = false
-        })
-      }
-    }
   }
 }
 </script>

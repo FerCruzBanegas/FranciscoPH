@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Avatar;
 use App\User;
+use App\Customer;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -96,7 +97,8 @@ class UserController extends Controller
 
     public function count ()
     {
-        return User::count();
+        // return User::count();
+        return Customer::count();
     }
 
     public function getUserRoles ($user)

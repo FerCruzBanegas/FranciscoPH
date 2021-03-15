@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Service\ServiceResource;
 use App\Http\Resources\Service\ServiceCollection;
 use App\Services\EncodeService;
+use Illuminate\Support\Facades\DB;
 
 class ServiceController extends Controller
 {
@@ -89,7 +90,7 @@ class ServiceController extends Controller
                     'path' => $file,
                     'service_id' => $service->id
                 ]);
-                $url = substr($image->path, 8).'|'.substr($file, 8);
+                $url = substr($file, 8);
             } else {
                 Video::create([
                     'path' => $file,
@@ -126,9 +127,30 @@ class ServiceController extends Controller
         return $service;
     }
 
-    public function destroy ($service)
+    public function destroy (Service $service)
     {
-        return Service::destroy($service);
+        DB::beginTransaction();
+        try {
+            if ($this->deleteFile($service->image->path)) {
+                if ($service->audio) {
+                    if (!$this->deleteFile($service->audio->path)) {
+                        throw new \Exception("Se produjo un error interno. Inténtalo de nuevo más tarde.");
+                    }
+                } else {
+                    if (!$this->deleteFile($service->video->path)) {
+                        throw new \Exception("Se produjo un error interno. Inténtalo de nuevo más tarde.");
+                    }
+                }
+                $service->delete();
+            } else {
+                throw new \Exception("Se produjo un error interno. Inténtalo de nuevo más tarde.");
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json($e->getMessage(), 500);
+        }
+        return response()->json(['success' => true], 200);
     }
 
     public function count ()
